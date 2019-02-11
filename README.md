@@ -8,6 +8,7 @@ PyTorch practice for further research
 - https://github.com/ShayanPersonal/stacked-autoencoder-pytorch/blob/master/model.py
 - https://github.com/L1aoXingyu/pytorch-beginner/blob/master/08-AutoEncoder/simple_autoencoder.py
 - https://github.com/Abhipanda4/Sparse-Autoencoders/blob/master/train.py
+    - see how regularization term is used
 
 
 ## 2. LSTM
