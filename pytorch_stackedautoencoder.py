@@ -13,20 +13,23 @@ import torch.nn.functional as F
 # In[2]:
 
 
-# Hyperparameters
-num_epochs = 10000
-batch_size = 128
-learning_rate = 1e-3
+# Generate data
+num_data = 5
+input_size = 20
+hidden_sizes = [15, 10]
+input_X = torch.randn(num_data, input_size)
 
 
 # In[3]:
 
 
-# Generate data
-num_data = 5
-input_size = 20
-hidden_sizes = [15, 10]
-img_1 = torch.randn(num_data, input_size)
+# Hyperparameters
+num_epochs = 10000
+batch_size = 128
+learning_rate = 1e-3
+weight_decay = 1e-5
+BETA = 3
+RHO = 0.01
 
 
 # In[4]:
@@ -40,6 +43,8 @@ class AutoEncoder(nn.Module):
     def __init__(self, input_size, hidden_size, lr=1e-1, bn=False):
         super().__init__()
         
+        self.hidden_size = hidden_size
+        
         if bn:
             self.encode = nn.Sequential(
                 nn.Linear(input_size, hidden_size),
@@ -47,7 +52,7 @@ class AutoEncoder(nn.Module):
                 nn.ReLU()
             )
             self.decode = nn.Sequential(
-                nn.Linaer(hidden_size, input_size),
+                nn.Linear(hidden_size, input_size),
                 nn.BatchNorm1d(input_size),
             )
         else:
@@ -71,6 +76,13 @@ class AutoEncoder(nn.Module):
         if self.training:
             x_rec = self.decode(z)
             loss = self.criterion(x_rec, Variable(x.data, requires_grad=False))
+            
+            # Sparsity regularization
+            rho = torch.FloatTensor([RHO]*self.hidden_size).unsqueeze(0)
+            rho_hat = torch.sum(z, dim=0, keepdim=True)
+            sparsity_penalty = BETA*F.kl_div(rho, rho_hat)
+            
+            loss += sparsity_penalty
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
@@ -121,6 +133,7 @@ class StackedAutoEncoder(nn.Module):
 
 # Construct model
 sae = StackedAutoEncoder(input_size, hidden_sizes, lr=learning_rate, bn=False)
+
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(
     sae.parameters(), lr=learning_rate, weight_decay=1e-5)
@@ -134,22 +147,22 @@ for epoch in range(num_epochs):
     sae.train()
     
     # Forward
-    output = sae(img_1)
-    output = sae.reconstruct(output)
-    loss = criterion(output, img_1)
+    encoded = sae(input_X)
+    output = sae.reconstruct(encoded)   
+    loss = criterion(output, input_X)
     
     # Backward
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
     
-    print('[epoch {}]loss: {:.4f}'.format(epoch+1, loss.data[0]))
+    print('[epoch {}] loss: {:.4f}'.format(epoch+1, loss.data[0]))
 
 
 # In[8]:
 
 
-print(img_1[0])
+print(input_X[0])
 
 
 # In[9]:
