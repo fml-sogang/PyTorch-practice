@@ -79,7 +79,7 @@ class AutoEncoder(nn.Module):
             
             # Sparsity regularization
             rho = torch.FloatTensor([RHO]*self.hidden_size).unsqueeze(0)
-            rho_hat = torch.sum(z, dim=0, keepdim=True)
+            rho_hat = torch.mean(z, dim=0, keepdim=True)
             sparsity_penalty = BETA*F.kl_div(rho, rho_hat)
             
             loss += sparsity_penalty
