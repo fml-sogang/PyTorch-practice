@@ -17,4 +17,5 @@ PyTorch practice for further research
 
 ## 2. LSTM
 #### Reference
+- [PyTorch example for LSTM](https://github.com/pytorch/examples/tree/master/time_sequence_prediction)
 
