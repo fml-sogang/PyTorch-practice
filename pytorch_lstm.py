@@ -12,7 +12,6 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-get_ipython().run_line_magic('run', 'generate_sine_wave.ipynb')
 
 
 # In[2]:
