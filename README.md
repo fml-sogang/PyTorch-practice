@@ -16,6 +16,8 @@ PyTorch practice for further research
 
 
 ## 2. LSTM
+Code Baseline from [PyTorch example for LSTM](https://github.com/pytorch/examples/tree/master/time_sequence_prediction). <br>
+We made some modification to the Baseline code, such as giving dimensions of model as a parameter for the model.
+
 #### Reference
 - [PyTorch example for LSTM](https://github.com/pytorch/examples/tree/master/time_sequence_prediction)
-
