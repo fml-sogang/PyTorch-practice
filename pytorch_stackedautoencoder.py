@@ -51,18 +51,15 @@ class AutoEncoder(nn.Module):
                 nn.BatchNorm1d(hidden_size),
                 nn.ReLU()
             )
-            self.decode = nn.Sequential(
-                nn.Linear(hidden_size, input_size),
-                nn.BatchNorm1d(input_size),
-            )
         else:
             self.encode = nn.Sequential(
                 nn.Linear(input_size, hidden_size),
                 nn.ReLU()
             )
-            self.decode = nn.Sequential(
-                nn.Linear(hidden_size, input_size),
-            )
+            
+        self.decode = nn.Sequential(
+            nn.Linear(hidden_size, input_size),
+        )
 
         self.criterion = nn.MSELoss()
         self.optimizer = torch.optim.Adam(
